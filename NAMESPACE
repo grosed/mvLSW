@@ -11,6 +11,8 @@ export(Spectrum2Transfer)
 export(AutoCorrIP)
 export(varEWS)
 export(ApxCI)
+export(Smooth_EWS)
+export(AdjPositiveDef)
 
 import(wavethresh)
 import(xts)
