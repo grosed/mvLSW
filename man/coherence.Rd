@@ -1,0 +1,89 @@
+% File src/library/base/man/coherence.Rd
+\name{coherence}
+\alias{coherence}
+\title{Local Wavelet Coherence and Partial Coherence}
+\description{
+  Wavelet coherence and partial coherence of an evolutionary 
+  wavelet spectrum.
+}
+\usage{
+  coherence(object, partial = FALSE)
+}
+
+\arguments{
+  \item{object}{Multivariate evolutionary wavelet spectrum as a
+    \code{mvLSW} object.}
+  \item{partial}{Logical, should the partial coherence be 
+    calculated. Set as \code{FALSE} by default.}
+}
+
+\details{
+  Given the evolutionary wavelet spectrum of a multivariate locally 
+  stationary time series, denoted by the matrix sequence \eqn{S_{j,k}}, 
+  then the coherence matrix for level j and location k is:
+
+  \deqn{R_{j,k} = D_{j,k} S_{j,k} D_{j,k}}
+
+  where \eqn{D_{j,k} = diag\{ (S^{(p,p)}_{j,k})^{-0.5} : p=1,\ldots,P \}}.
+  This measures the linear cross-dependence between different 
+  channels at a particular level. 
+
+  Notate the inverse spectrum matrix as \eqn{G_{j,k} = S^{-1}_{j,k}}, 
+  then the partial coherence matrix for level j and location k is 
+  derived as follows:
+  
+  \deqn{\Gamma_{j,k} = -H_{j,k} G_{j,k} H_{j,k}}
+
+  where \eqn{H_{j,k} = diag\{ (G^{(p,p)}_{j,k})^{-0.5} : p=1,\ldots,P \}}.
+  This measures the coherence between channels after removing the 
+  linear effects if all other channels and so enable the distinction 
+  between direct and indirect linear dependency between channels.
+  
+  For valid calculations of (partial) coherence, values within [-1,1], 
+  it is important that the spectral matrices are positive definite.
+}
+
+\value{
+  An object of class \code{mvLSW}, invisibly.
+}
+
+\references{
+  Taylor, S.A.C., Park, T.A. and Eckley, I. (2019) Multivariate 
+  locally stationary wavelet analysis with the mvLSW R package.
+  \emph{Journal of statistical software} \strong{90}(11) pp. 1--16,
+  doi: 10.18637/jss.v090.i11.
+
+  Park, T., Eckley, I. and Ombao, H.C. (2014) Estimating 
+  time-evolving partial coherence between signals via multivariate 
+  locally stationary wavelet processes. \emph{Signal Processing, 
+  IEEE Transactions on} \strong{62}(20) pp. 5240-5250.
+}
+
+\seealso{
+  \code{\link{as.mvLSW}}, \code{\link{mvEWS}}.
+}
+
+\examples{
+## Sample tri-variate time series
+##  Series 2 & 3 are dependent indirectly via Series 1
+set.seed(100)
+X <- matrix(rnorm(3 * 2^8), ncol = 3)
+X[1:192, 2] <- X[1:192, 2] + 0.95 * X[1:192, 1]
+X[65:256, 3] <- X[65:256, 3] - 0.95 * X[65:256, 1]
+X <- as.ts(X)
+
+## Evolutionary Wavelet Spectrum
+EWS <- mvEWS(X, filter.number = 4, kernel.name = "daniell", 
+  kernel.param = 20)
+
+## Coherence
+RHO <- coherence(EWS, partial = FALSE)
+plot(RHO, style = 2, info = 1, ylab = "Coherence", diag = FALSE)
+
+## Partial Coherence
+PRHO <- coherence(EWS, partial = TRUE)
+plot(PRHO, style = 2, info = 1, ylab = "P. Coh.", diag = FALSE) 
+#series 2&3 are closer to 0
+}
+
+\keyword{coherence}

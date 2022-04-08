@@ -1,0 +1,108 @@
+% File src/library/base/man/rmvLSW.Rd
+\name{rmvLSW}
+\alias{rmvLSW}
+\alias{simulate.mvLSW}
+\title{Sample a Multivariate Locally Stationary Wavelet Process}
+\description{
+  Sample a multivariate locally stationary wavelet process.
+}
+\usage{
+rmvLSW(Transfer = NULL, Spectrum = NULL, noiseFN = rnorm, ...)  
+
+\method{simulate}{mvLSW}(object, nsim = 1, seed = NULL, ...)
+}
+
+\arguments{
+  \item{Transfer}{A \code{mvLSW} object containing the set of 
+    transfer function matrices of the process.}
+  \item{Spectrum, object}{A \code{mvLSW} object containing the 
+    multivariate evolutionary wavelet spectrum of the process. 
+    This argument is only used if \code{Transfer} is not supplied.}
+  \item{noiseFN}{The function for sampling the innovations.}
+  \item{nsim}{Number of mvLSW time series to draw. Only 
+    \code{nsim = 1} is accepted.}
+  \item{seed}{Seed for the random number generator.}
+  \item{...}{Optional arguments to be passed to the function for
+    sampling the innovation process.}
+}
+
+\details{
+  Samples a single multivariate locally stationary wavelet time 
+  series for the given set of transfer function matrices. These 
+  are assumed to be lower-triangular (including diagonal) matrices.
+  If the mvEWS is supplied instead, then 
+  this is pre-processed by \code{Spectrum2Transfer()} to obtain 
+  the transfer function matrices.
+  
+  The \code{Transfer} and \code{Spectrum} are both \code{mvLSW} 
+  objects and therefore contain information about defining the 
+  wavelet function.
+  
+  The innovation process is assumed to be second order stationary 
+  with expectation zero, orthogonal and unit variance. The first argument 
+  of \code{noiseFN} must be \code{n} and define the number of samples 
+  to generate. The function must also return a numerical vector 
+  of length \code{n}.
+  
+  The \code{simulate} command implements \code{rmvLSW} under default 
+  arguments unless specified via \code{...}.
+}
+
+\value{
+  A \code{ts} matrix object of a multivariate locally stationary 
+  time series. The columns of the matrix correspond to different 
+  channels and the rows identify the time axis.
+}
+
+\references{
+  Taylor, S.A.C., Park, T.A. and Eckley, I. (2019) Multivariate 
+  locally stationary wavelet analysis with the mvLSW R package.
+  \emph{Journal of statistical software} \strong{90}(11) pp. 1--16,
+  doi: 10.18637/jss.v090.i11.
+
+  Park, T., Eckley, I. and Ombao, H.C. (2014) Estimating 
+  time-evolving partial coherence between signals via multivariate 
+  locally stationary wavelet processes. \emph{Signal Processing, 
+  IEEE Transactions on} \strong{62}(20) pp. 5240-5250.
+}
+
+\seealso{
+  \code{\link{mvLSW}}, \code{\link{Spectrum2Transfer}}, 
+  \code{rnorm}, \code{AvBasis}, \code{ts}.
+}
+
+\examples{
+## Define evolutionary wavelet spectrum, structure only on level 2
+Spec <- array(0, dim = c(3, 3, 8, 256))
+Spec[1, 1, 2, ] <- 10
+Spec[2, 2, 2, ] <- c(rep(5, 64), rep(0.6, 64), rep(5, 128))
+Spec[3, 3, 2, ] <- c(rep(2, 128), rep(8, 128))
+Spec[2, 1, 2, ] <- Spec[1, 2, 2, ] <- punif(1:256, 65, 192)
+Spec[3, 1, 2, ] <- Spec[1, 3, 2, ] <- c(rep(-1, 128), rep(5, 128))
+Spec[3, 2, 2, ] <- Spec[2, 3, 2, ] <- -0.5
+
+## Define Haar wavelet function and create mvLSW object
+EWS <- as.mvLSW(x = Spec, filter.number = 1, family = "DaubExPhase",
+  min.eig.val = NA)
+plot(EWS, style = 2, info = 2)
+
+## Sample with Gaussian innovations
+set.seed(10)
+X <- rmvLSW(Spectrum = EWS)
+plot(X)
+
+## Alternatively:
+X1 <- simulate(object = EWS)
+plot(X1)
+
+## Define smoother wavelet function and create mvLSW object
+EWS2 <- as.mvLSW(x = Spec, filter.number = 10, family = "DaubExPhase")
+
+## Sample with logistic innovations
+set.seed(10)
+X2 <- rmvLSW(Spectrum = EWS2, noiseFN = rlogis, scale = sqrt(3)/pi)
+plot(X2)
+}
+
+\concept{rmvLSW}
+\concept{simulate.mvLSW}
