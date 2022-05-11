@@ -932,7 +932,7 @@ Smooth_GCV <- function(
     kernel <- kernel(kernel.name, kernel.param[1], kernel.param[2])
   }
 
-  if(kernel$coef[1] == 1 && sum(2 * kernel$coef[-1]) < .Machine$double){
+  if(kernel$coef[1] == 1 && sum(2 * kernel$coef[-1]) < .Machine$double.eps){
     warning(paste0("Smoothing kernel ", attributes(kernel)$name, " is equivalent to the identity function."))
     #i.e. smoothed spectrum equates to the raw spectrum
     if(GCVonly){
@@ -983,7 +983,7 @@ Smooth_GCV <- function(
     M = as.integer(kernel$m),
     kernel = as.double(kernel$coef[c(kernel$m:1, 0, 1:kernel$m) + 1]),
     Contribute = as.integer(Contribute),
-    eps = as.double(.Machine$double),
+    eps = as.double(.Machine$double.eps),
     GCV = as.double(0.0),
     ErrorCode = as.integer(0L), PACKAGE = "mvLSW"
   )

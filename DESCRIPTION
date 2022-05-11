@@ -1,8 +1,8 @@
 Package: mvLSW
 Type: Package
 Title: Multivariate, Locally Stationary Wavelet Process Estimation
-Version: 1.2.5
-Date: 2022-04-08
+Version: 1.2.6
+Date: 2022-05-11
 Authors@R: c(
 	person("Simon","Taylor", role=c("aut"), email="simon.taylor@ed.ac.uk"),
 	person("Tim","Park",role="aut",email="t.park@lancaster.ac.uk"),
