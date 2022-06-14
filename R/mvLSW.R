@@ -17,7 +17,7 @@ as.mvLSW <- function(
 
   spectrum <- x
   ##spectrum - value type and dimension
-  if(class(spectrum) != "array") stop("'spectrum' is not a numerical array.") 
+  if(!is(spectrum,"array")) stop("'spectrum' is not a numerical array.") 
   Dim <- dim(spectrum)
   if(length(Dim) != 4) stop("Dimension of 'spectrum' is not as expected.")
   if(Dim[1] == 1) stop("'spectrum' is univariate! Refer to the 'wavethresh' library.")
@@ -787,26 +787,6 @@ CorrectBias <- function(
     invisible(object)
   }
 }
-
-### Smoothining of the Evolutionary Wavelet Spectrum Estimate (wrapper) ###
-#' Smoothining of the Evolutionary Wavelet Spectrum Estimate (wrapper)
-#'
-#' @name TODO *************
-#'
-#' @description Smoothining of the Evolutionary Wavelet Spectrum Estimate
-#'
-#' @param object An mvLSW object containing the multivariate evolutionary wavelet spectrum estimate.
-#' @param kernel.name Name of smoothing kernel to be supplied to \code{kernel()}. Kernel \code{"daniell"} is defined by default.
-#' @param kernel.param Parameters to be passed to \code{kernel()}. This argument must be a vector if \code{type="all"}, otherwise it must be a matrix with each column defining the kernel parameters for each \code{log2(nrow(X))} levels from coarse to fine. If the name is \code{"dirichlet"} or \code{"fejer"} then \code{kernel.param} must have length 2 (or a matrix with 2 rows) which are supplied to \code{kernel()} as arguments \code{m} and \code{r} respectively. Note that the width of the kernel cannot be larger than the time series length. This is set by default as the square root of the length of the time series.
-#' @param optimize  Logical, should the smoothing be optimized? If \code{FALSE} (default) then smoothing is performed as specified with \code{kernel.name} and \code{kernel.param}.  Otherwise, \code{kernel.param} defines the upper parameter bound in determining the optimal kernel is determined by minimising the generalized cross-validation gamma deviance criterion.
-#'  @param type How should the smoothing be performed? If \code{"all"} (default) then the same smoothing kernel is applied to all levels, else if \code{"by.level"} then a different smoothing#'  kernel is applied to each level.
-#' @param type TODO !!!!
-#' @param level TODO !!!!
-#'
-#' @return An object of class \code{mvLSW}, invisibly.
-#'
-#' @rdname Smooth_EWS
-#'
 Smooth_EWS <- function(
   object, 
   kernel.name = "daniell", 
@@ -1588,25 +1568,6 @@ PosDefEst <- function(A, tol = .Machine$double.eps){
 }
 
 
-
-
-
-
-
-## Adjust Matrix Estimate to be Strictly Positive Definite
-#' Adjust Matrix Estimate to be Strictly Positive Definite
-#'
-#' @name AdjPositiveDef
-#'
-#' @description Adjust Matrix Estimate to be Strictly Positive Definite.
-#' 
-#' @param object An mvLSW object containing the multivariate evolutionary wavelet spectrum estimate.
-#' @param tol The tolerance. Default value is \code{tol=1e-10}.
-#' 
-#' @return An updated mvLSW object.
-#'
-#' @rdname AdjPositiveDef
-#'
 AdjPositiveDef <- function (object, tol = 1e-10) 
 {
     if (!is.mvLSW(object)) 
